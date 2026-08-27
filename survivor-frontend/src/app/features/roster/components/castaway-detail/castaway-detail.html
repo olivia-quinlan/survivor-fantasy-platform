@@ -1,0 +1,97 @@
+@if (contestant(); as contestant) {
+  <div class="detail-container">
+    <nav class="navigation-bar">
+      <a routerLink="/" class="back-link">
+        <span class="arrow">←</span> Back to Season 45 Roster
+      </a>
+    </nav>
+
+    <section class="dossier-card">
+      <div class="dossier-image-wrapper">
+        <img [src]="contestant.imageUrl" 
+             (error)="$any($event.target).src = 'assets/images/default-silhouette.png'"
+             [alt]="contestant.name" 
+             class="dossier-image" 
+             loading="lazy" 
+             decoding="async">
+      </div>
+
+      <div class="dossier-details">
+        <div class="dossier-header">
+          <app-tribe-flag [tribeName]="contestant.currentTribeName+' Tribe'" [tribeColorHex]="contestant.currentTribeColorHex"></app-tribe-flag>
+          <h1>{{ contestant.name }}</h1>
+          <p class="occupation-subtitle">{{ contestant.occupation }}</p>
+        </div>
+
+        <div class="stat-grid">
+          <div class="stat-item">
+            <span class="stat-label">Final Placement</span>
+            <span class="stat-value">Finish #{{ contestant.finalPlacement }}</span>
+          </div>
+
+          <div class="stat-item">
+            <span class="stat-label">Tournament Status</span>
+            <span class="stat-value highlight">{{ contestant.status }}</span>
+          </div>
+
+          <div class="stat-item">
+            <span class="stat-label">Hometown</span>
+            <span class="stat-value">{{ contestant.hometown }}</span>
+          </div>
+
+          <div class="stat-item">
+            <span class="stat-label">Season Run</span>
+            <span class="stat-value">Survivor 45</span>
+          </div>
+        </div>
+
+        <div class="action-footer">
+          <a [href]="contestant.wikiUrl" target="_blank" rel="noopener noreferrer" class="wiki-button">
+            View Fandom Wiki Dossier ↗
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <section class="timeline-section">
+      <h2>Tribal Progression Path</h2>
+      <p class="section-description">Chronological beach and faction migrations throughout the 26-day cycle.</p>
+
+      <div class="timeline-wrapper">
+        @for (step of contestant.timeline; track step.phaseOrder) {
+          <div class="timeline-node">
+            @if (!$first) {
+              <div class="connector-line"></div>
+            }
+
+            <div class="node-card">
+              <div class="phase-indicator">
+                @if (step.tribeStatus === 'INITIAL') {
+                  Starting Tribe
+                } @else if (step.tribeStatus === 'SWAP') {
+                  Swapped Tribe
+                } @else if (step.tribeStatus === 'MERGE') {
+                  Merged Tribe
+                } @else {
+                  Game Milestone
+                }
+              </div>
+
+              <app-tribe-flag [tribeName]="step.tribeName" [tribeColorHex]="step.tribeColorHex"></app-tribe-flag>
+
+              <div class="node-meta">
+                <span class="day-indicator">Day {{ step.dayNumber }}</span>
+                <span class="episode-indicator">Episode {{ step.episodeNumber }}</span>
+              </div>
+            </div>
+          </div>
+        }
+      </div>
+    </section>
+  </div>
+} @else {
+  <div class="loading-state">
+    <div class="spinner"></div>
+    <p>Loading Castaway Dossier...</p>
+  </div>
+}

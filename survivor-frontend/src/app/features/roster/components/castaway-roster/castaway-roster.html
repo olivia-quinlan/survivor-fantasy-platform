@@ -1,0 +1,16 @@
+<main class="directory-container">
+  <header class="directory-header">
+    <div class="header-badge">Season 45</div>
+    <h1>Castaway Directory</h1>
+    <p class="subtitle">18 Castaways • Fiji • 26 Days</p>
+  </header>
+
+  <div class="roster-grid">
+    @for (player of contestants(); track player.appearanceId) {
+      <app-castaway-card [player]="player"></app-castaway-card>
+    }
+  </div>
+</main>
+
+
+

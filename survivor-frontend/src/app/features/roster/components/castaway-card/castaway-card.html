@@ -1,0 +1,36 @@
+<article class="castaway-card" [routerLink]="['/contestants', player().appearanceId]">
+  <div class="avatar-wrapper" [style.background]="imageFailed() ? player().currentTribeColorHex : 'var(--photo-ground)'">
+    @if (!imageFailed()) {
+      <img [src]="player().imageUrl" 
+         (error)="imageFailed.set(true)"
+         [alt]="player().name" 
+         class="castaway-avatar" 
+         loading="lazy" 
+         decoding="async">
+    } @else {
+      <svg class="fallback-icon" viewBox="0 0 100 130" fill="#fff">
+        <circle cx="50" cy="34" r="26"/>
+        <path d="M50 66c-26 0-42 16-42 40v24h84V106c0-24-16-40-42-40z"/>
+      </svg>
+
+    }
+    
+    <app-status-badge [status]="player().status" [placementSummary]="player().placementSummary" />
+    
+    
+  </div>
+
+  <div class="card-content">
+    <h2 class="player-name">{{ player().name }}</h2>
+    <p class="player-occupation">{{ player().occupation }}</p>
+    
+    <div class="meta-row">
+      <app-tribe-flag [tribeName]="player().currentTribeName" [tribeColorHex]="player().currentTribeColorHex"></app-tribe-flag>
+
+      <span class="placement-text">
+        {{ player().placementSummary }}
+      </span>
+    </div>
+  </div>
+</article>
+

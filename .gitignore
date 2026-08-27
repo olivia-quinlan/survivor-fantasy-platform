@@ -1,0 +1,3 @@
+# Claude Code local config/instructions - keep out of the repo entirely
+.claude/
+CLAUDE.md
