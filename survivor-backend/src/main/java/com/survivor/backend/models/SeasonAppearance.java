@@ -24,7 +24,7 @@ public class SeasonAppearance {
     @JoinColumn(name = "season_id", referencedColumnName = "id")
     private Season season;
 
-    private int finalPlacement;
+    private Integer finalPlacement;
 
     @Column(length = 50)
     private String status;
@@ -34,5 +34,11 @@ public class SeasonAppearance {
 
     @Column(name = "occupation", length = 150)
     private String occupation;
+
+    @Column(columnDefinition = "TEXT")
+    private String bio;
+
+    @Column(name = "elimination_day")
+    private Integer eliminationDay;
 
 }

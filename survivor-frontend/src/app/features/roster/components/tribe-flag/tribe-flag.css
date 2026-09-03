@@ -1,4 +1,5 @@
 .tribe-flag {
+  display: inline-block;
   color: #fff;
   font-weight: 700;
   font-size: 0.75rem;

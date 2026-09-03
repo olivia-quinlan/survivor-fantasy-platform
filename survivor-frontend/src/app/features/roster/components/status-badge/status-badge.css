@@ -1,5 +1,5 @@
 .badge {
-  display: flex;
+  display: inline-flex;
   align-items: center;
   padding: 4px 10px;
   border-radius: 6px;
@@ -10,6 +10,7 @@
   backdrop-filter: blur(8px);
   background: #efe1c4;
   color: var(--text-secondary);
+  box-shadow: var(--shadow-sm);
 }
 
 .badge-winner {
@@ -17,8 +18,12 @@
   color: #000;
 }
 
-:host {
-   position: absolute;
+:host(.floating) {
+  position: absolute;
   top: 12px;
   right: 12px; 
+}
+
+:host {
+  align-self: flex-start;
 }

@@ -25,9 +25,17 @@ public class Season {
 
     private LocalDateTime premiereDate;
 
-    private int premiereRosterSize;
+    private Integer premiereRosterSize;
 
-    private int mergeRosterSize;
+    private Integer mergeRosterSize;
 
-    private int sitdEpisodeOffset;
+    private Integer sitdEpisodeOffset;
+
+    private String location;
+
+    private Integer numberOfDays;
+
+    private Integer castSize;
+
+    private LocalDateTime finaleDate;
 }

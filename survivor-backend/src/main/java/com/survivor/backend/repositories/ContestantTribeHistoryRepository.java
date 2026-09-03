@@ -7,4 +7,5 @@ import java.util.List;
 
 public interface ContestantTribeHistoryRepository extends JpaRepository<ContestantTribeHistory,Long> {
     List<ContestantTribeHistory> findByAppearanceIdOrderByPhaseOrderAsc(Long appearanceId);
+    boolean existsByTribeIdAndTribeStatus(Long tribeId,String tribeStatus);
 }

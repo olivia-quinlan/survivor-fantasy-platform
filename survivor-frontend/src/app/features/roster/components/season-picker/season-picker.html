@@ -1,0 +1,47 @@
+<div class="tribe-ribbon"></div>
+
+<main class="picker-container">
+  <header class="picker-header">
+    <div class="header-badge">Survivor</div>
+    <h1>Season Directory</h1>
+    <span class="header-divider"></span>
+  </header>
+
+  <div class="season-grid">
+    @for (season of seasons(); track season.seasonId) {
+      <a class="poster-card" [routerLink]="['/seasons', season.seasonId]">
+        <div class="poster-cover" [style.background]="tribeGradient(season)">
+          <span class="poster-ribbon" [class]="seasonStatus(season)">
+            @if (seasonStatus(season) === 'complete') {
+              Complete
+            } @else if (seasonStatus(season) === 'upcoming') {
+              Upcoming
+            } @else {
+              Current Season
+            }
+          </span>
+        </div>
+
+        <div class="poster-body">
+          <h2>{{ season.seasonName }}</h2>
+
+          <div class="stat-chips">
+            <span class="stat-chip">{{ season.location }}</span>
+            <span class="stat-chip">{{ season.numberOfDays }} Days</span>
+            <span class="stat-chip">{{ season.castSize }} Castaways</span>
+          </div>
+
+          <div class="poster-dates">
+            @if (season.finaleDate) {
+              {{ season.premiereDate | date:'MMM d, y' }} &ndash; {{ season.finaleDate | date:'MMM d, y' }}
+            } @else if (seasonStatus(season) === 'upcoming') {
+              Premieres {{ season.premiereDate | date:'MMM d, y' }}
+            } @else {
+              Premiered {{ season.premiereDate | date:'MMM d, y' }}
+            }
+          </div>
+        </div>
+      </a>
+    }
+  </div>
+</main>

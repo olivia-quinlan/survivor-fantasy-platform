@@ -25,10 +25,14 @@
     <p class="player-occupation">{{ player().occupation }}</p>
     
     <div class="meta-row">
-      <app-tribe-flag [tribeName]="player().currentTribeName" [tribeColorHex]="player().currentTribeColorHex"></app-tribe-flag>
+      @if (player().currentTribeName) {
+        <app-tribe-flag [tribeName]="player().currentTribeName" [tribeColorHex]="player().currentTribeColorHex"></app-tribe-flag>
+      } @else {
+        <span class="tribe-tbd">Tribe TBD</span>
+      }
 
-      <span class="placement-text">
-        {{ player().placementSummary }}
+      <span class="hometown-text">
+        {{ player().hometown }}
       </span>
     </div>
   </div>

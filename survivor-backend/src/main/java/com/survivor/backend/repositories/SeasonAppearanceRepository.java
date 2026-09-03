@@ -7,4 +7,5 @@ import java.util.List;
 
 public interface SeasonAppearanceRepository extends JpaRepository<SeasonAppearance,Long> {
     List<SeasonAppearance> findBySeasonIdOrderByFinalPlacementAsc(String seasonId);
+    List<SeasonAppearance> findByContestantIdOrderBySeasonPremiereDate(Long contestantId);
 }

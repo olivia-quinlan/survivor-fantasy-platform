@@ -8,9 +8,13 @@ export interface SeasonContestant {
     wikiUrl: string;
     imageUrl: string;
     finalPlacement: number | null;
-    status: string;
+    status: string | null;
     currentTribeName: string;
     currentTribeColorHex: string;
     timeline: TribeHistory[];
     placementSummary: string;
+    seasonId: string;
+    contestantId: number;
+    bio: string | null;
+    eliminationDay: number | null;
 }

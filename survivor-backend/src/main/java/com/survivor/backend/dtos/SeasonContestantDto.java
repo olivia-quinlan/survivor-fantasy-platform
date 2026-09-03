@@ -21,4 +21,8 @@ public class SeasonContestantDto {
     private String imageUrl;
     private String occupation;
     private String placementSummary;
+    private String seasonId;
+    private Long contestantId;
+    private String bio;
+    private Integer eliminationDay;
 }

@@ -23,6 +23,5 @@ public class GlobalContestant {
 
     private String hometown;
 
-    @Column(columnDefinition = "TEXT")
-    private String bio;
+
 }

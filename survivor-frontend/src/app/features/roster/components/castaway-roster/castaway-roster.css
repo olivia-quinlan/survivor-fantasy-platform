@@ -1,7 +1,35 @@
 .directory-container {
+  position: relative;
   max-width: 1280px;
   margin: 0 auto;
   padding: 40px 24px;
+}
+
+.navigation-bar {
+  position: absolute;
+  top: 40px;
+  left: 24px;
+}
+
+.back-link {
+  color: var(--text-secondary);
+  text-decoration: none;
+  font-size: 0.95rem;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  transition: color 0.2s ease;
+}
+
+.back-link:hover {
+  color: var(--text-primary);
+}
+
+.tribe-ribbon {
+  height: 10px;
+  width: 100%;
+  box-shadow: var(--shadow-sm);
 }
 
 .directory-header {
@@ -34,6 +62,13 @@
   color: var(--text-secondary);
   font-size: 1.1rem;
   margin: 0;
+}
+
+.header-dates {
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  font-weight: 600;
+  margin: 6px 0 0;
 }
 
 .roster-grid {

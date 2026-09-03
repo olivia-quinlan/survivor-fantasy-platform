@@ -5,8 +5,12 @@ import { Component, input } from '@angular/core';
   imports: [],
   templateUrl: './status-badge.html',
   styleUrl: './status-badge.css',
+  host: {
+    '[class.floating]': 'floating()'
+  }
 })
 export class StatusBadge {
-  status = input.required<string>()
+  status = input.required<string | null>()
   placementSummary = input.required<string>()
+  floating = input<boolean>(true);
 }

@@ -1,11 +1,14 @@
 package com.survivor.backend.services;
 
+import com.survivor.backend.dtos.GlobalContestantHistoryDto;
 import com.survivor.backend.dtos.SeasonContestantDto;
+import com.survivor.backend.dtos.SeasonDto;
 import com.survivor.backend.dtos.TribeHistoryDto;
-import com.survivor.backend.models.ContestantTribeHistory;
-import com.survivor.backend.models.SeasonAppearance;
+import com.survivor.backend.models.*;
 import com.survivor.backend.repositories.ContestantTribeHistoryRepository;
 import com.survivor.backend.repositories.SeasonAppearanceRepository;
+import com.survivor.backend.repositories.SeasonRepository;
+import com.survivor.backend.repositories.TribeRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -17,6 +20,8 @@ import java.util.List;
 public class SeasonService {
     private final SeasonAppearanceRepository appearanceRepository;
     private final ContestantTribeHistoryRepository historyRepository;
+    private final SeasonRepository seasonRepository;
+    private final TribeRepository tribeRepository;
 
     public List<SeasonContestantDto> getSeasonRoster(String seasonId){
         List <SeasonAppearance> appearances = appearanceRepository.findBySeasonIdOrderByFinalPlacementAsc(seasonId);
@@ -34,6 +39,8 @@ public class SeasonService {
             dto.setPlacementSummary(toOrdinal(appearance.getFinalPlacement()));
             dto.setImageUrl(appearance.getImageUrl());
             dto.setOccupation(appearance.getOccupation());
+            dto.setSeasonId(appearance.getSeason().getId());
+            dto.setContestantId(appearance.getContestant().getId());
 
 
 
@@ -57,9 +64,11 @@ public class SeasonService {
 
             dto.setTimeline(timeline);
 
-            ContestantTribeHistory currentTribe = historyList.get(historyList.size()-1);
-            dto.setCurrentTribeName(currentTribe.getTribe().getName());
-            dto.setCurrentTribeColorHex(currentTribe.getTribe().getColorHex());
+            if (!historyList.isEmpty()) {
+                ContestantTribeHistory currentTribe = historyList.get(historyList.size()-1);
+                dto.setCurrentTribeName(currentTribe.getTribe().getName());
+                dto.setCurrentTribeColorHex(currentTribe.getTribe().getColorHex());
+            }
 
             seasonContestantDtoList.add(dto);
         }
@@ -80,6 +89,10 @@ public class SeasonService {
         dto.setFinalPlacement(appearance.getFinalPlacement());
         dto.setPlacementSummary(toOrdinal(appearance.getFinalPlacement()));
         dto.setStatus(appearance.getStatus());
+        dto.setSeasonId(appearance.getSeason().getId());
+        dto.setContestantId(appearance.getContestant().getId());
+        dto.setBio(appearance.getBio());
+        dto.setEliminationDay(appearance.getEliminationDay());
 
         List<ContestantTribeHistory> history = historyRepository.findByAppearanceIdOrderByPhaseOrderAsc((appearance.getId()));
         List<TribeHistoryDto> timeline = new ArrayList<>();
@@ -106,7 +119,104 @@ public class SeasonService {
 
     }
 
-    private String toOrdinal(int finalPlacement) {
+    public List<SeasonDto> getAllSeasons(){
+        List<Season> seasons = seasonRepository.findAll();
+        List<SeasonDto> seasonDtoList = new ArrayList<>();
+        for (Season season : seasons) {
+            SeasonDto seasonDto = new SeasonDto();
+            seasonDto.setSeasonId(season.getId());
+            seasonDto.setSeasonName(season.getName());
+            seasonDto.setPremiereDate(season.getPremiereDate());
+            seasonDto.setFinaleDate(season.getFinaleDate());
+            seasonDto.setLocation(season.getLocation());
+            seasonDto.setNumberOfDays(season.getNumberOfDays());
+            seasonDto.setCastSize(season.getCastSize());
+
+            List<Tribe> tribes = tribeRepository.findBySeasonId(season.getId());
+            List<Tribe> nonMergeTribes = new ArrayList<>();
+            List<Tribe> mergeTribes = new ArrayList<>();
+
+            for (Tribe tribe : tribes) {
+                if (historyRepository.existsByTribeIdAndTribeStatus(tribe.getId(), "MERGE")) {
+                    mergeTribes.add(tribe);
+                } else  {
+                    nonMergeTribes.add(tribe);
+                }
+            }
+
+            List<Tribe> orderedTribes = new ArrayList<>();
+            orderedTribes.addAll(nonMergeTribes);
+            orderedTribes.addAll(mergeTribes);
+
+
+            List<String> tribeColors = new ArrayList<>();
+            for (Tribe tribe : orderedTribes) {
+                tribeColors.add(tribe.getColorHex());
+            }
+            seasonDto.setTribeColors(tribeColors);
+
+            seasonDtoList.add(seasonDto);
+        }
+        return seasonDtoList;
+    }
+
+    public List<GlobalContestantHistoryDto> getGlobalContestantHistory(Long contestantId){
+        List<SeasonAppearance> appearances = appearanceRepository.findByContestantIdOrderBySeasonPremiereDate(contestantId);
+        List<GlobalContestantHistoryDto> globalContestantHistoryDtoList = new ArrayList<>();
+        for (SeasonAppearance appearance : appearances) {
+            GlobalContestantHistoryDto contestantHistory = new GlobalContestantHistoryDto();
+            contestantHistory.setAppearanceId(appearance.getId());
+            contestantHistory.setSeasonId(appearance.getSeason().getId());
+            contestantHistory.setSeasonName(appearance.getSeason().getName());
+            contestantHistory.setPlacementSummary(toOrdinal(appearance.getFinalPlacement()));
+
+            globalContestantHistoryDtoList.add(contestantHistory);
+        }
+        return globalContestantHistoryDtoList;
+    }
+
+    public SeasonDto getSeasonById(String seasonId){
+        SeasonDto seasonDto = new SeasonDto();
+        Season season = seasonRepository.findById(seasonId)
+                .orElseThrow(() -> new RuntimeException("Season not found with ID: " + seasonId));
+        seasonDto.setSeasonId(season.getId());
+        seasonDto.setSeasonName(season.getName());
+        seasonDto.setPremiereDate(season.getPremiereDate());
+        seasonDto.setFinaleDate(season.getFinaleDate());
+        seasonDto.setCastSize(season.getCastSize());
+        seasonDto.setLocation(season.getLocation());
+        seasonDto.setNumberOfDays(season.getNumberOfDays());
+
+        List<Tribe> tribes = tribeRepository.findBySeasonId(season.getId());
+        List<Tribe> nonMergeTribes = new ArrayList<>();
+        List<Tribe> mergeTribes = new ArrayList<>();
+
+        for (Tribe tribe : tribes) {
+            if (historyRepository.existsByTribeIdAndTribeStatus(tribe.getId(), "MERGE")) {
+                mergeTribes.add(tribe);
+            } else  {
+                nonMergeTribes.add(tribe);
+            }
+        }
+
+        List<Tribe> orderedTribes = new ArrayList<>();
+        orderedTribes.addAll(nonMergeTribes);
+        orderedTribes.addAll(mergeTribes);
+
+
+        List<String> tribeColors = new ArrayList<>();
+        for (Tribe tribe : orderedTribes) {
+            tribeColors.add(tribe.getColorHex());
+        }
+        seasonDto.setTribeColors(tribeColors);
+
+        return seasonDto;
+    }
+
+    private String toOrdinal(Integer finalPlacement) {
+        if (finalPlacement == null) {
+            return null;
+        }
         if (finalPlacement % 100 == 11|finalPlacement % 100 == 12|finalPlacement % 100 == 13) {
             return finalPlacement + "th";
         } else {

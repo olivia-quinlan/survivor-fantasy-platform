@@ -1,8 +1,12 @@
 @if (contestant(); as contestant) {
+  @if (contestantTribeColors(contestant).length > 0) {
+    <div class="tribe-ribbon" [style.background]="tribeGradient(contestant)"></div>
+  }
+
   <div class="detail-container">
     <nav class="navigation-bar">
-      <a routerLink="/" class="back-link">
-        <span class="arrow">←</span> Back to Season 45 Roster
+      <a [routerLink]="['/seasons', season()?.seasonId]" class="back-link">
+        <span class="arrow">←</span> Back to {{ season()?.seasonName }} Castaways 
       </a>
     </nav>
 
@@ -18,20 +22,21 @@
 
       <div class="dossier-details">
         <div class="dossier-header">
-          <app-tribe-flag [tribeName]="contestant.currentTribeName+' Tribe'" [tribeColorHex]="contestant.currentTribeColorHex"></app-tribe-flag>
+          @if (contestant.currentTribeName) {
+            <app-tribe-flag [tribeName]="contestant.currentTribeName+' Tribe'" [tribeColorHex]="contestant.currentTribeColorHex"></app-tribe-flag>
+          } @else {
+            <span class="tribe-tbd">Tribe TBD</span>
+          }
           <h1>{{ contestant.name }}</h1>
           <p class="occupation-subtitle">{{ contestant.occupation }}</p>
         </div>
 
         <div class="stat-grid">
           <div class="stat-item">
-            <span class="stat-label">Final Placement</span>
-            <span class="stat-value">Finish #{{ contestant.finalPlacement }}</span>
-          </div>
-
-          <div class="stat-item">
-            <span class="stat-label">Tournament Status</span>
-            <span class="stat-value highlight">{{ contestant.status }}</span>
+            <span class="stat-label">Furthest Phase Reached</span>
+            <span class="stat-value highlight">
+              <app-status-badge [status]="contestant.status" [placementSummary]="contestant.placementSummary" [floating]="false"/>
+            </span>
           </div>
 
           <div class="stat-item">
@@ -39,23 +44,30 @@
             <span class="stat-value">{{ contestant.hometown }}</span>
           </div>
 
-          <div class="stat-item">
-            <span class="stat-label">Season Run</span>
-            <span class="stat-value">Survivor 45</span>
+          <div class="stat-item full-width">
+            <span class="stat-label">Appearances</span>
+            <span class="stat-value appearances-list">
+              @for (appearance of appearances(); track appearance.seasonId) {
+                @if (appearance.appearanceId === contestant.appearanceId) {
+                  {{ appearance.seasonName }}
+                } @else {
+                  <a [routerLink]="['/contestants',appearance.appearanceId]">{{ appearance.seasonName }}</a>
+                }
+              }
+            </span>
           </div>
         </div>
 
         <div class="action-footer">
           <a [href]="contestant.wikiUrl" target="_blank" rel="noopener noreferrer" class="wiki-button">
-            View Fandom Wiki Dossier ↗
+            View Fandom Wiki Page ↗
           </a>
         </div>
       </div>
     </section>
 
     <section class="timeline-section">
-      <h2>Tribal Progression Path</h2>
-      <p class="section-description">Chronological beach and faction migrations throughout the 26-day cycle.</p>
+      <h2>Season History</h2>
 
       <div class="timeline-wrapper">
         @for (step of contestant.timeline; track step.phaseOrder) {
@@ -86,7 +98,64 @@
             </div>
           </div>
         }
+
+        @if (season(); as season) {
+          <div class="timeline-node final-node" [class.is-winner]="isLit(contestant)">
+            @if (contestant.timeline.length > 0) {
+              <div class="connector-line"></div>
+            }
+
+            <div class="node-card">
+              <div class="phase-indicator">
+                @if (contestant.status === null) {
+                  Current Status
+                } @else {
+                  Final Result
+                }
+              </div>
+
+              @if (isLit(contestant)) {
+                <svg class="final-icon" width="26" height="26" viewBox="0 0 24 24">
+                  <rect x="10.3" y="12" width="3.4" height="10" rx="1" fill="#8a6d4a"/>
+                  <path fill="#6b5236" d="M9.5 12 8.7 8.3a1 1 0 0 1 1-1.2h4.6a1 1 0 0 1 1 1.2L14.5 12z"/>
+                  <path fill="#ffc23c" d="M12 1.5c-1.6 2.4-3 3.6-3 6a3 3 0 0 0 6 0c0-.9-.2-1.6-.5-2.2.15.5.15 1-.05 1.4-.4-2-1.3-3.3-2.45-5.2z"/>
+                  <path fill="#ff6b5b" d="M12 4.2c-.9 1.5-1.7 2.3-1.7 3.7a1.7 1.7 0 0 0 3.4 0c0-1.4-.8-2.2-1.7-3.7z"/>
+                </svg>
+              } @else {
+                <svg class="final-icon" width="26" height="26" viewBox="0 0 24 24">
+                  <rect x="10.3" y="12" width="3.4" height="10" rx="1" fill="#8a6d4a"/>
+                  <path fill="#5c5348" d="M9.5 12 8.7 8.3a1 1 0 0 1 1-1.2h4.6a1 1 0 0 1 1 1.2L14.5 12z"/>
+                  <path fill="none" stroke="#b7ac9d" stroke-width="1.5" stroke-linecap="round" d="M10.5 5.5c.6.7.6 1.3.1 1.9M13 4.8c.6.9.5 1.6-.1 2.3"/>
+                </svg>
+              }
+
+              <div class="final-label">{{ finalNodeLabel(contestant) }}</div>
+
+              @if (finalNodeDay(contestant, season); as day) {
+                <div class="node-meta">
+                  <span class="day-indicator">Day {{ day }}</span>
+                </div>
+              }
+            </div>
+          </div>
+        }
       </div>
+    </section>
+
+    <section class="bio-section">
+      <h2>About {{ contestant.name }}</h2>
+      @if (contestant.bio) {
+        @for (segment of bioSegments(contestant.bio); track $index) {
+          <p class="bio-text">
+            @if (segment.label) {
+              <strong>{{ segment.label }}</strong>
+            }
+            {{ segment.answer }}
+          </p>
+        }
+      } @else {
+        <p class="bio-placeholder">No bio yet — check back soon.</p>
+      }
     </section>
   </div>
 } @else {
