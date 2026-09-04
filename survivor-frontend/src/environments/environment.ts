@@ -1,3 +1,3 @@
 export const environment = {
-    apiUrl: `dummy_url`
+    apiUrl: `https://survivor-fantasy-platform-production.up.railway.app/api/v1/public`
 };
