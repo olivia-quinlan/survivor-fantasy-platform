@@ -76,3 +76,10 @@
   grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
   gap: 24px;
 }
+
+@media (max-width: 768px) {
+  .navigation-bar {
+    position: static;
+    margin-bottom: 24px;
+  }
+}
