@@ -2,7 +2,7 @@
 
 A reality TV fantasy league platform, starting with Survivor. Live at [unrealityleague.com](https://unrealityleague.com).
 
-## Features (Vertical Slice 1)
+## Features (Current)
 
 - **Season directory:** each season with its location, length, cast size, and tribe colors.
 - **Contestant performance across a season:** every castaway's final placement, status (winner, finalist, jury, or pre-jury), and elimination day. Castaways in a season that is still airing show as active.
