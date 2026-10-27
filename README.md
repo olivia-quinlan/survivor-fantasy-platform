@@ -119,7 +119,7 @@ erDiagram
 
 - JDK 21
 - PostgreSQL
-- Node.js and npm (TODO: document the minimum Node.js version; it is not pinned in the repo)
+- Node.js and npm
 
 ### Backend
 
